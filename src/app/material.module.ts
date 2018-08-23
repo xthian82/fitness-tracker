@@ -11,7 +11,7 @@ import {
   MatNativeDateModule, MatPaginatorModule,
   MatProgressSpinnerModule,
   MatSelectModule,
-  MatSidenavModule,
+  MatSidenavModule, MatSnackBarModule,
   MatSortModule,
   MatTableModule,
   MatTabsModule,
@@ -38,7 +38,8 @@ import { NgModule } from '@angular/core';
     MatDialogModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSnackBarModule
   ],
   exports: [
     MatButtonModule,
@@ -58,7 +59,8 @@ import { NgModule } from '@angular/core';
     MatDialogModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatSnackBarModule
   ]
 })
 export class MaterialModule {

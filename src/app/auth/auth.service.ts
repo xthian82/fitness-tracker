@@ -4,18 +4,30 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { TrainingService } from '../training/training.service';
+import { MatSnackBar } from '@angular/material';
+import { UIService } from '../shared/ui.service';
 
 @Injectable()
 export class AuthService {
   authChange = new Subject<boolean>();
   private isAuthenticated = false;
 
-  constructor(private router: Router, private dbAuth: AngularFireAuth, private trainingService: TrainingService) {}
+  constructor(
+    private router: Router,
+    private dbAuth: AngularFireAuth,
+    private trainingService: TrainingService,
+    private snackBar: MatSnackBar,
+    private uiService: UIService) {}
 
   registerUser(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.dbAuth.auth.createUserWithEmailAndPassword(authData.email, authData.password)
+    .then(result => {
+      this.uiService.loadingStateChanged.next(false);
+    })
     .catch(err => {
-      console.log(err);
+      this.snackBar.open(err.message, null, {duration: 5000});
+      this.uiService.loadingStateChanged.next(false);
     });
   }
 
@@ -35,9 +47,14 @@ export class AuthService {
   }
 
   login(authData: AuthData) {
+    this.uiService.loadingStateChanged.next(true);
     this.dbAuth.auth.signInWithEmailAndPassword(authData.email, authData.password)
+    .then(result => {
+      this.uiService.loadingStateChanged.next(false);
+    })
     .catch(err => {
-      console.log(err);
+      this.uiService.loadingStateChanged.next(false);
+      this.snackBar.open(err.message, null, {duration: 5000});
     });
   }
 
