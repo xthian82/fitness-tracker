@@ -1,10 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {TrainingService} from '../training.service';
-import {NgForm} from '@angular/forms';
-import {AngularFirestore} from 'angularfire2/firestore';
-import {Observable} from 'rxjs/Observable';
-import {Exercise} from '../exercise.model';
-import {Subscription} from 'rxjs/Subscription';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TrainingService } from '../training.service';
+import { NgForm } from '@angular/forms';
+import { Exercise } from '../exercise.model';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-new-training',

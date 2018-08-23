@@ -17,7 +17,7 @@ import {
   MatTabsModule,
   MatToolbarModule
 } from '@angular/material';
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 
 @NgModule({
   imports: [

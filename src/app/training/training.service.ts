@@ -1,7 +1,7 @@
-import {Exercise} from './exercise.model';
-import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
-import {AngularFirestore} from 'angularfire2/firestore';
+import { Exercise } from './exercise.model';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/Subject';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 @Injectable()
 export class TrainingService {
@@ -11,11 +11,13 @@ export class TrainingService {
   private availableExercises: Exercise[];
 
   private runningExercise: Exercise;
+  private dbAvailableExercises = 'availableExercises';
+  private dbFinishedExercises = 'finishedExercises';
 
   constructor(private db: AngularFirestore) {}
 
   fetchAvailableExercises() {
-    this.db.collection('availableExercises').snapshotChanges().map(docArray => {
+    this.db.collection(this.dbAvailableExercises).snapshotChanges().map(docArray => {
       return docArray.map(doc => {
         return {
           id: doc.payload.doc.id,
@@ -65,12 +67,12 @@ export class TrainingService {
   }
 
   fetchCompletedOrCancelledExercises() {
-    this.db.collection('finishedExercises').valueChanges().subscribe((exercises: Exercise[]) => {
+    this.db.collection(this.dbFinishedExercises).valueChanges().subscribe((exercises: Exercise[]) => {
       this.finishedExercisesChanged.next(exercises);
     });
   }
 
   private addDataToDatabase(exercise: Exercise) {
-    this.db.collection('finishedExercises').add(exercise);
+    this.db.collection(this.dbFinishedExercises).add(exercise);
   }
 }
