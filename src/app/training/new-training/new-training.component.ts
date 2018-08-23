@@ -14,7 +14,7 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   exercises: Exercise[];
   private exerciseSubscription: Subscription;
   private loadingSubs: Subscription;
-  private isLoading = true;
+  isLoading = true;
 
   constructor(private trainingService: TrainingService, private uiService: UIService) {}
 

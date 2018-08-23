@@ -13,13 +13,5 @@ export const environment = {
     storageBucket: 'yout-182904.appspot.com',
     messagingSenderId: '1091459861193'
   }
-  // firebase: {
-  //   apiKey: 'AIzaSyCwtTbXVRD9pdy-YdomcYR0u2tpM25TXaM',
-  //   authDomain: 'ng-exercise-b8275.firebaseapp.com',
-  //   databaseURL: 'https://ng-exercise-b8275.firebaseio.com',
-  //   projectId: 'ng-exercise-b8275',
-  //   storageBucket: 'ng-exercise-b8275.appspot.com',
-  //   messagingSenderId: '289077785989'
-  // }
 };
 

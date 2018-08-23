@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs/Subscription';
 })
 export class SignupComponent implements OnInit, OnDestroy {
   maxDate: Date;
-  private isLoading = false;
+  isLoading = false;
   private loadingSubs: Subscription;
 
   constructor(private authService: AuthService, private uiService: UIService) {}
