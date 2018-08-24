@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TrainingService } from './training.service';
 import { Store } from '@ngrx/store';
-import * as fromTraining from 'training.reducer';
+import * as fromTraining from './training.reducer';
 import { Observable } from 'rxjs/Observable';
 
 @Component({

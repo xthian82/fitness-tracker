@@ -34,13 +34,13 @@ export function trainingReducer(state = initialState, action: TrainActions) {
     case START_TRAINING:
       return {
         ...state,
-        activeTraining: { ... this.availableExercises.find(ex => ex.id === action.payload) }
+        activeTraining: { ... state.availableExercises.find(ex => ex.id === action.payload) }
       };
     case STOP_TRAINING:
       return {
         ...state,
         activeTraining: null
-      }
+      };
     default:
       return state;
   }
