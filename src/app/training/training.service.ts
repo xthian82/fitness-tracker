@@ -59,23 +59,11 @@ export class TrainingService {
   }
 
   completeExercise() {
-    // this.addDataToDatabase({
-    //   ...this.runningExercise,
-    //   date: new Date(),
-    //   state: 'completed'
-    // });
     this.addDataToDatabase(this.newExercise('completed'));
     this.cleanExercise();
   }
 
   cancelExercise(progress: number) {
-    // this.addDataToDatabase({
-    //   ...this.runningExercise,
-    //   duration: this.runningExercise.duration * (progress / 100),
-    //   calories: this.runningExercise.calories * (progress / 100),
-    //   date: new Date(),
-    //   state: 'cancelled'
-    // });
     this.addDataToDatabase(this.newExercise('cancelled', progress));
     this.cleanExercise();
   }

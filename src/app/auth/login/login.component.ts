@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {AuthService} from '../auth.service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
 import { UIService } from '../../shared/ui.service';
-import * as fromRoot from '../../app.reducer';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import * as fromRoot from '../../app.reducer';
 
 @Component({
   selector: 'app-login',
