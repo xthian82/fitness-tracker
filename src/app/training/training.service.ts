@@ -5,17 +5,18 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { Subscription } from 'rxjs/Subscription';
 import { Store } from '@ngrx/store';
 import { UIService } from '../shared/ui.service';
-import * as fromRoot from '../app.reducer';
+import * as fromTraining from 'training.reducer';
 import * as UI from '../shared/ui.actions';
+import * as Training from './training.actions';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class TrainingService {
-  exerciseChanged = new Subject<Exercise>();
+  // exerciseChanged = new Subject<Exercise>();
   exercisesChanged = new Subject<Exercise[]>();
-  finishedExercisesChanged = new Subject<Exercise[]>();
+  // finishedExercisesChanged = new Subject<Exercise[]>();
   private availableExercises: Exercise[];
 
-  private runningExercise: Exercise;
   private dbAvailableExercises = 'availableExercises';
   private dbFinishedExercises = 'finishedExercises';
   private subscriptions: Subscription[] = [];
@@ -23,7 +24,7 @@ export class TrainingService {
   constructor(
     private db: AngularFirestore,
     private uiService: UIService,
-    private store: Store<{ui: fromRoot.State}>
+    private store: Store<fromTraining.State>
   ) {}
 
   fetchAvailableExercises() {
@@ -40,8 +41,9 @@ export class TrainingService {
     })
     .subscribe((exercises: Exercise[]) => {
       this.store.dispatch(new UI.StopLoading());
-      this.availableExercises = exercises;
-      this.exercisesChanged.next([...this.availableExercises]);
+      this.store.dispatch(new Training.SetAvailableTrainings(exercises));
+      // this.availableExercises = exercises;
+      // this.exercisesChanged.next([...this.availableExercises]);
     }, error => {
       this.uiService.showSnackbar('Fetching exercises failed, please try again later', null, 3000);
       this.store.dispatch(new UI.StopLoading());
@@ -50,33 +52,32 @@ export class TrainingService {
   }
 
   startExercise(selectedId: string) {
-    this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId);
-    this.exerciseChanged.next({...this.runningExercise});
-  }
-
-  getRunningExercise(): Exercise {
-    return {...this.runningExercise};
+    // this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId);
+    // this.exerciseChanged.next({...this.runningExercise});
+    this.store.dispatch(new Training.StartTraining(selectedId));
   }
 
   completeExercise() {
-    this.addDataToDatabase(this.newExercise('completed'));
-    this.cleanExercise();
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1))
+      .subscribe(ex => this.addDataToDatabase(this.newExercise(ex, 'completed')));
+    this.store.dispatch(new Training.StopTraining());
   }
 
   cancelExercise(progress: number) {
-    this.addDataToDatabase(this.newExercise('cancelled', progress));
-    this.cleanExercise();
-  }
-
-  cleanExercise() {
-    this.runningExercise = null;
-    this.exerciseChanged.next(null);
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1))
+      .subscribe(ex => this.addDataToDatabase(this.newExercise(ex, 'cancelled', progress)));
+    this.store.dispatch(new Training.StopTraining());
   }
 
   fetchCompletedOrCancelledExercises() {
-    this.subscriptions.push(this.db.collection(this.dbFinishedExercises).valueChanges().subscribe((exercises: Exercise[]) => {
-      this.finishedExercisesChanged.next(exercises);
-    }));
+    this.subscriptions.push(
+      this.db
+      .collection(this.dbFinishedExercises)
+      .valueChanges()
+      .subscribe((exercises: Exercise[]) => {
+        this.store.dispatch(new Training.SetFinishedTrainings(exercises));
+      })
+    );
   }
 
   private addDataToDatabase(exercise: Exercise) {
@@ -87,11 +88,11 @@ export class TrainingService {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  private newExercise(status, progress?: number): Exercise {
+  private newExercise(ex: Exercise, status, progress?: number): Exercise {
     return {
-      ...this.runningExercise,
-      duration: progress ? this.runningExercise.duration * (progress / 100) : this.runningExercise.duration,
-      calories: progress ? this.runningExercise.calories * (progress / 100) : this.runningExercise.calories,
+      ...ex,
+      duration: progress ? ex.duration * (progress / 100) : ex.duration,
+      calories: progress ? ex.calories * (progress / 100) : ex.calories,
       date: new Date(),
       state: status
     };
