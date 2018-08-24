@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   isLoading$: Observable<boolean>;
 
-  constructor(private authService: AuthService, private uiService: UIService, private store: Store<{ui: fromRoot.State}>) {}
+  constructor(private authService: AuthService, private uiService: UIService, private store: Store<fromRoot.State>) {}
 
   ngOnInit() {
     this.isLoading$ = this.store.select(fromRoot.getIsLoading);
