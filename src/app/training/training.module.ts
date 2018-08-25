@@ -23,7 +23,7 @@ import { trainingReducer } from './training.reducer';
     ReactiveFormsModule,
     TrainingRoutingModule,
     StoreModule,
-    StoreModule.forFeature('trainingReducer', trainingReducer)
+    StoreModule.forFeature('training', trainingReducer)
   ],
   entryComponents: [StopTrainingComponent]
 })

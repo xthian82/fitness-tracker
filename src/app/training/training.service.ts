@@ -11,8 +11,6 @@ import * as Training from './training.actions';
 
 @Injectable()
 export class TrainingService {
-  private dbAvailableExercises = 'availableExercises';
-  private dbFinishedExercises = 'finishedExercises';
   private subscriptions: Subscription[] = [];
 
   constructor(
@@ -23,7 +21,7 @@ export class TrainingService {
 
   fetchAvailableExercises() {
     this.store.dispatch(new UI.StartLoading());
-    this.subscriptions.push(this.db.collection(this.dbAvailableExercises).snapshotChanges().map(docArray => {
+    this.subscriptions.push(this.db.collection('availableExercises').snapshotChanges().map(docArray => {
       return docArray.map(doc => {
         return {
           id: doc.payload.doc.id,
@@ -47,34 +45,36 @@ export class TrainingService {
   }
 
   completeExercise() {
-    this.store.select(fromTraining.getActiveTraining).pipe(take(1))
-      .subscribe(ex => this.addDataToDatabase(this.newExercise(ex, 'completed')));
-    this.store.dispatch(new Training.StopTraining());
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1)).subscribe(ex => {
+      this.addDataToDatabase(this.newExercise(ex, 'completed'));
+      this.store.dispatch(new Training.StopTraining());
+    });
   }
 
   cancelExercise(progress: number) {
-    this.store.select(fromTraining.getActiveTraining).pipe(take(1))
-      .subscribe(ex => this.addDataToDatabase(this.newExercise(ex, 'cancelled', progress)));
-    this.store.dispatch(new Training.StopTraining());
+    this.store.select(fromTraining.getActiveTraining).pipe(take(1)).subscribe(ex => {
+      this.addDataToDatabase(this.newExercise(ex, 'cancelled', progress));
+      this.store.dispatch(new Training.StopTraining());
+    });
   }
 
   fetchCompletedOrCancelledExercises() {
     this.subscriptions.push(
       this.db
-      .collection(this.dbFinishedExercises)
-      .valueChanges()
-      .subscribe((exercises: Exercise[]) => {
-        this.store.dispatch(new Training.SetFinishedTrainings(exercises));
-      })
+        .collection('finishedExercises')
+        .valueChanges()
+        .subscribe((exercises: Exercise[]) => {
+          this.store.dispatch(new Training.SetFinishedTrainings(exercises));
+        })
     );
-  }
-
-  private addDataToDatabase(exercise: Exercise) {
-    this.db.collection(this.dbFinishedExercises).add(exercise);
   }
 
   cancelSubscriptions() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  private addDataToDatabase(exercise: Exercise) {
+    this.db.collection('finishedExercises').add(exercise);
   }
 
   private newExercise(ex: Exercise, status, progress?: number): Exercise {
